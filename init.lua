@@ -636,8 +636,33 @@ require('lazy').setup({
             },
           },
         },
-        -- pyright = {},
-        -- rust_analyzer = {},
+        pyright = {
+          capabilities = capabilities,
+          on_attach = function(client, bufnr)
+            -- Keymaps
+            local opts = { noremap = true, silent = true, buffer = bufnr }
+            vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+            vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+            vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+          end,
+        },
+        rust_analyzer = {
+          capabilities = capabilities,
+          on_attach = function(_, bufnr)
+            local opts = { noremap = true, silent = true, buffer = bufnr }
+            vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+            vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+            vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+          end,
+          settings = {
+            ['rust-analyzer'] = {
+              cargo = { allFeatures = true },
+              checkOnSave = {
+                command = 'clippy', -- runs clippy on save for linting
+              },
+            },
+          },
+        },
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
