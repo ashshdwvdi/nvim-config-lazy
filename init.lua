@@ -625,6 +625,22 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+
+      -- Swift LSP Setup
+      local lspconfig = require 'lspconfig'
+      lspconfig.sourcekit.setup {
+        capabilities = capabilities,
+        cmd = { 'xcrun', 'sourcekit-lsp' }, -- Ensures correct path when using Xcode
+        filetypes = { 'swift', 'objective-c', 'objective-cpp' },
+        root_dir = lspconfig.util.root_pattern('Package.swift', '.git'),
+        on_attach = function(_, bufnr)
+          local opts = { noremap = true, silent = true, buffer = bufnr }
+          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+          vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+        end,
+      }
+
       local servers = {
         -- clangd = {},
         gopls = {
