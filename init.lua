@@ -628,18 +628,24 @@ require('lazy').setup({
 
       -- Swift LSP Setup
       local lspconfig = require 'lspconfig'
-      lspconfig.sourcekit.setup {
-        capabilities = capabilities,
-        cmd = { 'xcrun', 'sourcekit-lsp' }, -- Ensures correct path when using Xcode
+
+      vim.lsp.config('sourcekit', {
+        cmd = { '/usr/bin/xcrun', 'sourcekit-lsp' },
         filetypes = { 'swift', 'objective-c', 'objective-cpp' },
-        root_dir = lspconfig.util.root_pattern('Package.swift', '.git'),
-        on_attach = function(_, bufnr)
-          local opts = { noremap = true, silent = true, buffer = bufnr }
-          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-          vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+        root_dir = function(bufnr, on_dir)
+          local fname = vim.api.nvim_buf_get_name(bufnr)
+          local root = vim.fs.root(fname, {
+            'Package.swift',
+            '.git',
+            '*.xcodeproj',
+            '*.xcworkspace',
+          })
+
+          on_dir(root or vim.fs.dirname(fname))
         end,
-      }
+      })
+
+      vim.lsp.enable 'sourcekit'
 
       local servers = {
         -- clangd = {},
