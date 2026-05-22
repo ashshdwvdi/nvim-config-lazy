@@ -115,6 +115,8 @@ vim.opt.showmode = false
 vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 vim.opt.expandtab = true
+vim.opt.termguicolors = true
+vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
 
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
